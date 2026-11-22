@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VAYRO - فايرو</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+<style>
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  background:#101820;
+  color:white;
+  font-family:Arial;
+}
+header {
+  padding:12px;
+  text-align:center;
+  background:#182630;
+}
+h1 { color:#f5b942; margin:5px; }
+#map { height:65vh; width:100%; }
+.panel {
+  padding:16px;
+  text-align:center;
+}
+input {
+  width:100%;
+  padding:14px;
+  margin:7px 0;
+  border:0;
+  border-radius:9px;
+}
+button {
+  background:#f5b942;
+  padding:14px;
+  border:0;
+  border-radius:9px;
+  font-weight:bold;
+  width:100%;
+  margin-top:8px;
+}
+</style>
+</head>
+<link rel="manifest" href="./manifest.json">
+<body>
+<header>
+<h1>VAYRO</h1>
+<p>مشوارك صار أسهل</p>
+</header>
+
+<div id="map"></div>
+
+<div class="panel">
+<input id="start" placeholder="موقع الانطلاق">
+<input id="destination" placeholder="وين تريد تروح؟">
+<button onclick="locateMe()">حدد موقعي الحالي</button>
+<button onclick="alert('قريباً نظام طلب الرحلات')">
+اطلب تكسي
+</button>
+<p id="status">جاري تحديد موقعك...</p>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const basra = [30.5085,47.7804];
+
+const map = L.map('map').setView(basra,13);
+
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{
+ attribution:'© OpenStreetMap'
+}).addTo(map);
+
+let marker;
+
+function locateMe() {
+ if (!navigator.geolocation) {
+  document.getElementById('status').textContent =
+  'المتصفح لا يدعم تحديد الموقع';
+  return;
+ }
+
+ document.getElementById('status').textContent =
+ 'جاري تحديد موقعك...';
+
+ navigator.geolocation.getCurrentPosition(
+  function(position) {
+   const lat = position.coords.latitude;
+   const lng = position.coords.longitude;
+
+   map.setView([lat,lng],16);
+
+   if(marker) map.removeLayer(marker);
+
+   marker = L.marker([lat,lng]).addTo(map)
+   .bindPopup('موقع انطلاقك').openPopup();
+
+   document.getElementById('start').value =
+   lat.toFixed(5)+', '+lng.toFixed(5);
+
+   document.getElementById('status').textContent =
+   'تم تحديد موقعك بنجاح';
+  },
+  function() {
+   map.setView(basra,13);
+   document.getElementById('status').textContent =
+   'تعذر تحديد الموقع. تظهر خريطة البصرة';
+  }
+ );
+}
+
+locateMe();
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js")
+      .then(() => console.log("VAYRO Ready"))
+      .catch(error => console.log(error));
+  });
+}
+</script>
+
+</body>
+</html>
+</body>
+</html>
