@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">تكسي فايرو</string>
+    <string name="title_activity_main">تكسي فايرو</string>
+    <string name="package_name">com.vayro.taxi</string>
+    <string name="custom_url_scheme">com.vayro.taxi</string>
+</resources>
